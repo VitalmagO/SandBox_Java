@@ -1,16 +1,12 @@
-/**
- * A program that prints <code>Hello World!</code>
- *
- * @author Vital
- * @version 1.0
- */
+import java.security.MessageDigest;
+
 public class HelloWorld {
-    /**
-     * Program entry point.
-     *
-     * @param comandLineArgs command-line arguments
-     */
-    public static void main(String[] comandLineArgs) {
-        System.out.println("Hello World!");
+
+    public static void main(String[] args) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] digest = md.digest("abracadabra".getBytes("UTF-8"));
+        for (byte b : digest) {
+            System.out.printf("%02x", b);
+        }
     }
 }
