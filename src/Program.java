@@ -1,91 +1,99 @@
-/**
- * Иерархия наследования и преобразование типов
- * @author Vital
- * @version 1.0
- * @see Person человек
- * @see Employee служащий некоторой компании
- * @see Client клиент банка
- */
-
 public class Program {
-
     public static void main(String[] args) {
-        Object tom = new Person("Tom");
-        ((Person) tom).display();
+        /**
+         * @param bookPrintable т.к. класс Journal релаизует интерфейс Printable, то переменная bookPrintable хранит ссылку на объект типа Journal
+         * @param journalPrintable аналогично
+         */
+        Printable bookPrintable = new Book("Java. Complete Reference.", "H. Shildt");
+        bookPrintable.print();
 
-        Object sam = new Employee("Sam", "Oracle");
-        ((Employee) sam).display();
+        Printable journalPrintable = new Journal("Foreign policy");
+        journalPrintable.print();
 
-        Object bob = new Client("Bob", "DeutscheBank", 3000);
-        Client cl_bob = (Client) bob;
-        cl_bob.display();
+        Printable p = new Journal("Foreign policy");
+        // Интерфейс не имеет метода getName, необходимо явное приведение
+        String name = ((Journal) p).getName();
+        System.out.printf("Name: %s\n", name);
 
-        Object kate = new Client("Kate", "DeutscheBank", 2000);
-        if (kate instanceof Employee) { //Важная проверка данных, которые к нам пришли и мы не знаем, что за тип объекта. instanceof проверяет, является ли kate объектом типа Employee
-            ((Employee)kate).display();
-        } else {
-            System.out.println("Conversion is invalid");
-        }
+        Printable notePrintable = new Note("ToDo");
+        notePrintable.print();
+
+        Printable printable = createPrintable("Foreign Affairs", false);
+        printable.print();
+
+        read(new Book("Java for impatients", "Cay Horstmann"));
+        read(new Journal("Java Dayly News"));
+
+    }
+
+    /**
+     * @param p Метод read() в качестве параметра принимает объект интерфейса Printable, поэтому в этот метод мы можем передать объекты Book или Journal
+     */
+    static void read(Printable p) {
+        p.print();
+    }
+
+    /**
+     * @param name
+     * @param option
+     * @return Возвращяет объект Printable, поэтому также мы можем возвратить как объект Book, так и Journal
+     */
+    static Printable createPrintable(String name, boolean option) {
+        if(option)
+            return new Book(name, "Undefined");
+        else
+            return new Journal(name);
     }
 }
 
-class Person {
+interface Printable {
+    default void print() {
+        System.out.println("Undefined printable");
+    }
+}
 
+class Book implements Printable {
+
+    String name;
+    String author;
+
+    public Book(String name, String author) {
+        this.name = name;
+        this.author = author;
+    }
+
+    @Override
+    public void print() {
+        System.out.printf("%s (%s) \n", name, author);
+    }
+}
+
+class Journal implements Printable {
+
+    private String name;
+
+    String getName() {
+        return name;
+    }
+
+    Journal(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void print() {
+        System.out.println(name);
+    }
+}
+
+class Note implements Printable {
     private String name;
 
     public String getName() {
         return name;
     }
 
-    public Person(String name) {
+    public Note(String name) {
         this.name = name;
-    }
-
-    public void display() {
-        System.out.printf("Person %s \n", name);
-    }
-}
-
-class Employee extends Person {
-
-    private String company;
-
-    public Employee(String name, String company) {
-        super(name);
-        this.company = company;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    @Override
-    public void display() {
-        System.out.printf("Employee %s works in %s \n", super.getName(), company);
-    }
-}
-
-class Client extends Person {
-
-    private int sum;
-    private String bank;
-
-    public Client(String name, String bank, int sum) {
-        super(name);
-        this.bank = bank;
-        this.sum = sum;
-    }
-
-    @Override
-    public void display() {
-        System.out.printf("Client %s has account in %s \n", super.getName(), bank);
-    }
-
-    public int getSum() {
-        return sum;
-    }
-
-    public String getBank() {
-        return bank;
     }
 }
