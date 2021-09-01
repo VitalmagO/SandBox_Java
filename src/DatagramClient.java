@@ -1,0 +1,17 @@
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+
+public class DatagramClient {
+    public static void main(String[] args) throws Exception {
+        try (DatagramSocket socket = new DatagramSocket()) {
+            DatagramPacket packet = encodePacket("Hello world!");
+            packet.setSocketAddress(new InetSocketAddress(11111));
+            socket.send(packet);
+        }
+    }
+
+    private static DatagramPacket encodePacket(String text) {
+        byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+        return new DatagramPacket(bytes, bytes.length);
+    }
+}
